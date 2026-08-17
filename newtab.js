@@ -43,13 +43,13 @@ input.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("pointerdown", (event) => {
-  if (!shell.contains(event.target)) {
+  if (!form.contains(event.target) && !history.contains(event.target)) {
     hideHistory();
   }
 });
 
 shell.addEventListener("focusout", (event) => {
-  if (!shell.contains(event.relatedTarget)) {
+  if (!form.contains(event.relatedTarget) && !history.contains(event.relatedTarget)) {
     hideHistory();
   }
 });

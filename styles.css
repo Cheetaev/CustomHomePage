@@ -123,3 +123,77 @@ body {
   outline: 2px solid #ffcc00;
   outline-offset: -2px;
 }
+
+.gpt-search {
+  position: absolute;
+  top: calc(100% + 86px);
+  right: 0;
+  display: flex;
+  width: min(440px, 86%);
+  padding: 4px;
+  background: #2f2f2f;
+  border: 1px solid #464646;
+  border-radius: 25px;
+}
+
+.gpt-search:focus-within {
+  border-color: #707070;
+}
+
+.gpt-search:has(.gpt-search__input:focus-visible) {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.gpt-search__input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  color: #f5f5f5;
+  font: 400 15px/1 Arial, sans-serif;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.gpt-search__input::placeholder {
+  color: #9b9b9b;
+  opacity: 1;
+}
+
+.gpt-search__button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #111111;
+  background: #f4f4f4;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.gpt-search__button:hover {
+  background: #ffffff;
+}
+
+.gpt-search__button:active {
+  background: #d8d8d8;
+}
+
+.gpt-search__button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.gpt-search__button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
