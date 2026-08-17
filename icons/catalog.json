@@ -1,0 +1,27 @@
+[
+  {
+    "id": "yandex-mail",
+    "label": "Яндекс Почта",
+    "src": "icons/yandex-mail.svg"
+  },
+  {
+    "id": "yandex-maps",
+    "label": "Яндекс Карты",
+    "src": "icons/yandex-maps.svg"
+  },
+  {
+    "id": "gmail",
+    "label": "Gmail",
+    "src": "icons/gmail.svg"
+  },
+  {
+    "id": "yandex-disk",
+    "label": "Яндекс Диск",
+    "src": "icons/yandex-disk.svg"
+  },
+  {
+    "id": "link",
+    "label": "Ссылка",
+    "src": "icons/link.svg"
+  }
+]

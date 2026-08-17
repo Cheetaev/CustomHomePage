@@ -9,6 +9,21 @@
   </head>
   <body>
     <div class="search-shell">
+      <nav class="shortcut-carousel" aria-label="Быстрые ссылки">
+        <button class="shortcut-arrow shortcut-arrow--previous" type="button" aria-label="Предыдущие ссылки">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="m12 5-5 5 5 5"></path>
+          </svg>
+        </button>
+        <div class="shortcut-viewport">
+          <div class="shortcut-track"></div>
+        </div>
+        <button class="shortcut-arrow shortcut-arrow--next" type="button" aria-label="Следующие ссылки">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="m8 5 5 5-5 5"></path>
+          </svg>
+        </button>
+      </nav>
       <form class="search" action="https://yandex.ru/search/" method="get" role="search">
         <input
           class="search__input"
@@ -50,6 +65,27 @@
         </button>
       </form>
     </div>
+    <dialog class="shortcut-dialog" aria-labelledby="shortcut-dialog-title">
+      <form class="shortcut-form" method="dialog">
+        <h2 id="shortcut-dialog-title">Добавить ссылку</h2>
+        <label class="shortcut-field">
+          <span>Название</span>
+          <input type="text" name="title" maxlength="24" autocomplete="off" required>
+        </label>
+        <label class="shortcut-field">
+          <span>Ссылка</span>
+          <input type="url" name="url" placeholder="https://example.com" maxlength="2048" autocomplete="off" required>
+        </label>
+        <fieldset class="shortcut-icon-field">
+          <legend>Иконка</legend>
+          <div class="shortcut-icon-picker"></div>
+        </fieldset>
+        <div class="shortcut-dialog__actions">
+          <button class="shortcut-dialog__cancel" type="button">Отмена</button>
+          <button class="shortcut-dialog__submit" type="submit">Добавить</button>
+        </div>
+      </form>
+    </dialog>
     <script src="newtab.js"></script>
   </body>
 </html>
