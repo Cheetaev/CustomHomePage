@@ -7,5 +7,17 @@
     <title>Новая вкладка</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body></body>
+  <body>
+    <form class="search" action="https://yandex.ru/search/" method="get" role="search">
+      <input
+        class="search__input"
+        type="search"
+        name="text"
+        placeholder="Поиск в Яндексе"
+        aria-label="Поиск в Яндексе"
+        autocomplete="off"
+      >
+      <button class="search__button" type="submit">Найти</button>
+    </form>
+  </body>
 </html>

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Dark New Tab",
-  "version": "1.0.0",
-  "description": "Пустая тёмная страница новой вкладки.",
+  "version": "1.1.0",
+  "description": "Тёмная страница новой вкладки с поиском Яндекса.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   }
