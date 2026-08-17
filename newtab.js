@@ -549,12 +549,61 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-gptForm.addEventListener("submit", () => {
+gptForm.addEventListener("submit", (event) => {
   const query = gptInput.value.trim();
 
-  if (query) {
-    void chrome.storage.session.set({ gptAutoSubmit: query });
+  if (!query) {
+    return;
   }
+
+  event.preventDefault();
+
+  const url = new URL("https://chatgpt.com/");
+  url.searchParams.set("temporary-chat", "true");
+  url.searchParams.set("q", query);
+
+  const inject = async (tabId) => {
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        world: "MAIN",
+        func: (nextQuery) => {
+          window.__DARK_NEW_TAB_GPT_QUERY = nextQuery;
+        },
+        args: [query]
+      });
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        world: "MAIN",
+        files: ["chatgpt-autosend.js"]
+      });
+    } catch {
+      return false;
+    }
+
+    return true;
+  };
+
+  const openChat = async () => {
+    const tab = await chrome.tabs.create({ url: url.href });
+    const listener = (tabId, info) => {
+      if (tabId === tab.id && info.status === "complete") {
+        chrome.tabs.onUpdated.removeListener(listener);
+        void inject(tab.id);
+      }
+    };
+
+    chrome.tabs.onUpdated.addListener(listener);
+    setTimeout(() => chrome.tabs.onUpdated.removeListener(listener), 25000);
+  };
+
+  const request = chrome.permissions?.request
+    ? chrome.permissions.request({
+        origins: ["https://chatgpt.com/*", "https://chat.openai.com/*"]
+      })
+    : Promise.resolve(true);
+
+  void request.catch(() => false).then(openChat);
 });
 
 shortcutCancel.addEventListener("click", () => shortcutDialog.close());

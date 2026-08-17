@@ -1,13 +1,19 @@
 {
   "manifest_version": 3,
   "name": "Dark New Tab",
-  "version": "1.10.0",
+  "version": "1.10.2",
   "description": "Тёмная страница новой вкладки с быстрыми ссылками, поиском Яндекса и ChatGPT.",
   "permissions": [
-    "storage"
+    "storage",
+    "scripting"
   ],
   "host_permissions": [
-    "https://chatgpt.com/*"
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
@@ -15,12 +21,14 @@
   "content_scripts": [
     {
       "matches": [
-        "https://chatgpt.com/*"
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
       ],
       "js": [
         "chatgpt-autosend.js"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_start",
+      "world": "MAIN"
     }
   ]
 }
