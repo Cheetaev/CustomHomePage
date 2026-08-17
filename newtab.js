@@ -2,15 +2,14 @@ const form = document.querySelector(".search");
 const input = document.querySelector(".search__input");
 const shell = document.querySelector(".search-shell");
 const history = document.querySelector(".search-history");
-const shortcutViewport = document.querySelector(".shortcut-viewport");
-const shortcutTrack = document.querySelector(".shortcut-track");
-const shortcutPrevious = document.querySelector(".shortcut-arrow--previous");
-const shortcutNext = document.querySelector(".shortcut-arrow--next");
+const shortcutGrid = document.querySelector(".shortcut-grid");
 const shortcutDialog = document.querySelector(".shortcut-dialog");
 const shortcutForm = document.querySelector(".shortcut-form");
 const shortcutIconPicker = document.querySelector(".shortcut-icon-picker");
 const shortcutUrlInput = shortcutForm.elements.url;
 const shortcutCancel = document.querySelector(".shortcut-dialog__cancel");
+const gptForm = document.querySelector(".gpt-search");
+const gptInput = document.querySelector(".gpt-search__input");
 
 const defaultShortcuts = [
   { title: "Яндекс Почта", url: "https://mail.yandex.ru/", iconId: "yandex-mail" },
@@ -19,10 +18,14 @@ const defaultShortcuts = [
   { title: "Яндекс Диск", url: "https://disk.yandex.ru/", iconId: "yandex-disk" }
 ];
 const SEARCH_HISTORY_LIMIT = 10;
+const SHORTCUT_COLUMNS_MAX = 6;
+const SHORTCUT_ROWS_MAX = 3;
+const SITE_ICON_ID = "favicon";
 
 let searchHistory = [];
 let iconCatalog = [];
 let customShortcuts = [];
+let hiddenDefaultShortcuts = [];
 
 function normalizeShortcutUrl(value) {
   try {
@@ -42,26 +45,94 @@ function findIcon(iconId) {
   return iconCatalog.find((icon) => icon.id === iconId);
 }
 
-function createShortcutCard(shortcut) {
-  const icon = findIcon(shortcut.iconId) || findIcon("link");
+function faviconSrc(pageUrl) {
+  try {
+    const url = new URL(pageUrl);
+
+    if (!["http:", "https:"].includes(url.protocol) || !url.hostname) {
+      return "";
+    }
+
+    return `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(url.hostname)}`;
+  } catch {
+    return "";
+  }
+}
+
+function shortcutIconSrc(shortcut) {
+  if (shortcut.iconId === SITE_ICON_ID) {
+    return faviconSrc(shortcut.url) || findIcon("link")?.src || "";
+  }
+
+  return (findIcon(shortcut.iconId) || findIcon("link"))?.src || "";
+}
+
+function applyIconFallback(image) {
+  const fallback = findIcon("link");
+
+  if (!fallback) {
+    return;
+  }
+
+  image.addEventListener("error", () => {
+    if (image.getAttribute("src") !== fallback.src) {
+      image.src = fallback.src;
+    }
+  });
+}
+
+function isAllowedIconId(iconId) {
+  return iconId === SITE_ICON_ID || Boolean(findIcon(iconId));
+}
+
+function isSameShortcut(left, right) {
+  return left.title === right.title && left.url === right.url && left.iconId === right.iconId;
+}
+
+function createShortcutCard(shortcut, source) {
+  const item = document.createElement("div");
   const link = document.createElement("a");
   const image = document.createElement("img");
   const label = document.createElement("span");
+  const remove = document.createElement("button");
+  const removeIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const removePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+  item.className = "shortcut-item";
 
   link.className = "shortcut-card";
   link.href = shortcut.url;
   link.title = shortcut.title;
 
   image.className = "shortcut-card__icon";
-  image.src = icon.src;
+  image.src = shortcutIconSrc(shortcut);
   image.alt = "";
   image.draggable = false;
+  applyIconFallback(image);
 
   label.className = "shortcut-card__label";
   label.textContent = shortcut.title;
 
+  remove.className = "shortcut-card__remove";
+  remove.type = "button";
+  remove.title = `Удалить ${shortcut.title}`;
+  remove.setAttribute("aria-label", `Удалить ${shortcut.title}`);
+
+  removeIcon.setAttribute("viewBox", "0 0 12 12");
+  removeIcon.setAttribute("aria-hidden", "true");
+  removePath.setAttribute("d", "M1.5 1.5 10.5 10.5M10.5 1.5 1.5 10.5");
+  removeIcon.append(removePath);
+
+  remove.append(removeIcon);
+  remove.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    void removeShortcut(shortcut, source);
+  });
+
   link.append(image, label);
-  return link;
+  item.append(link, remove);
+  return item;
 }
 
 function createAddShortcutButton() {
@@ -84,58 +155,170 @@ function createAddShortcutButton() {
   return button;
 }
 
-function updateCarouselControls() {
-  const maxScroll = shortcutViewport.scrollWidth - shortcutViewport.clientWidth;
+function listVisibleShortcuts() {
+  const hiddenDefaults = new Set(hiddenDefaultShortcuts);
+  const items = [];
 
-  shortcutPrevious.disabled = shortcutViewport.scrollLeft <= 1;
-  shortcutNext.disabled = maxScroll <= 1 || shortcutViewport.scrollLeft >= maxScroll - 1;
+  for (const shortcut of defaultShortcuts) {
+    if (!hiddenDefaults.has(shortcut.url)) {
+      items.push({ shortcut, source: "default" });
+    }
+  }
+
+  for (const shortcut of customShortcuts) {
+    items.push({ shortcut, source: "custom" });
+  }
+
+  return items;
+}
+
+function measureShortcutLayout() {
+  const narrow = window.matchMedia("(max-width: 560px)").matches;
+  const card = narrow ? 88 : 104;
+  const gap = narrow ? 8 : 10;
+  const columnsMax = Math.min(
+    SHORTCUT_COLUMNS_MAX,
+    Math.max(1, Math.floor((shell.clientWidth + gap) / (card + gap)))
+  );
+
+  return {
+    columnsMax,
+    cellsMax: columnsMax * SHORTCUT_ROWS_MAX
+  };
 }
 
 function renderShortcuts() {
+  const items = listVisibleShortcuts();
+  const { columnsMax, cellsMax } = measureShortcutLayout();
+  const canAdd = items.length < cellsMax;
+  const shown = items.slice(0, cellsMax);
+  const cellCount = shown.length + (canAdd ? 1 : 0);
   const fragment = document.createDocumentFragment();
 
-  for (const shortcut of [...defaultShortcuts, ...customShortcuts]) {
-    fragment.append(createShortcutCard(shortcut));
+  for (const { shortcut, source } of shown) {
+    fragment.append(createShortcutCard(shortcut, source));
   }
 
-  fragment.append(createAddShortcutButton());
-  shortcutTrack.replaceChildren(fragment);
+  if (canAdd) {
+    fragment.append(createAddShortcutButton());
+  }
 
-  requestAnimationFrame(() => {
-    shortcutViewport.scrollLeft = 0;
-    updateCarouselControls();
-  });
+  shortcutGrid.style.setProperty("--shortcut-columns", String(Math.min(cellCount, columnsMax)));
+  shortcutGrid.replaceChildren(fragment);
+}
+
+function normalizeHiddenDefaults(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const urls = [];
+
+  for (const item of value) {
+    if (typeof item !== "string" || !item || urls.includes(item)) {
+      continue;
+    }
+
+    if (defaultShortcuts.some((shortcut) => shortcut.url === item)) {
+      urls.push(item);
+    }
+  }
+
+  return urls;
+}
+
+async function removeShortcut(shortcut, source) {
+  if (source === "default") {
+    const { hiddenDefaultShortcuts: storedHidden } = await chrome.storage.local.get("hiddenDefaultShortcuts");
+    const nextHidden = normalizeHiddenDefaults(storedHidden);
+
+    if (!nextHidden.includes(shortcut.url)) {
+      nextHidden.push(shortcut.url);
+    }
+
+    await chrome.storage.local.set({ hiddenDefaultShortcuts: nextHidden });
+    hiddenDefaultShortcuts = nextHidden;
+  } else {
+    const { customShortcuts: storedShortcuts } = await chrome.storage.local.get("customShortcuts");
+    const nextShortcuts = (Array.isArray(storedShortcuts) ? storedShortcuts : [])
+      .map(normalizeStoredShortcut)
+      .filter(Boolean);
+    const index = nextShortcuts.findIndex((item) => isSameShortcut(item, shortcut));
+
+    if (index !== -1) {
+      nextShortcuts.splice(index, 1);
+    }
+
+    await chrome.storage.local.set({ customShortcuts: nextShortcuts });
+    customShortcuts = nextShortcuts;
+  }
+
+  renderShortcuts();
+}
+
+function createIconOption(icon, { checked = false } = {}) {
+  const option = document.createElement("label");
+  const radio = document.createElement("input");
+  const image = document.createElement("img");
+  const label = document.createElement("span");
+
+  option.className = "shortcut-icon-option";
+  option.dataset.iconId = icon.id;
+
+  radio.className = "visually-hidden";
+  radio.type = "radio";
+  radio.name = "iconId";
+  radio.value = icon.id;
+  radio.required = true;
+  radio.defaultChecked = checked;
+
+  image.src = icon.src;
+  image.alt = "";
+  image.draggable = false;
+  applyIconFallback(image);
+
+  label.textContent = icon.label;
+
+  option.append(radio, image, label);
+  return option;
 }
 
 function renderIconPicker() {
   const fragment = document.createDocumentFragment();
+  const siteFallback = findIcon("link");
 
-  iconCatalog.forEach((icon, index) => {
-    const option = document.createElement("label");
-    const radio = document.createElement("input");
-    const image = document.createElement("img");
-    const label = document.createElement("span");
+  fragment.append(createIconOption({
+    id: SITE_ICON_ID,
+    label: "С сайта",
+    src: siteFallback ? siteFallback.src : ""
+  }, { checked: true }));
 
-    option.className = "shortcut-icon-option";
-
-    radio.className = "visually-hidden";
-    radio.type = "radio";
-    radio.name = "iconId";
-    radio.value = icon.id;
-    radio.required = true;
-    radio.defaultChecked = index === 0;
-
-    image.src = icon.src;
-    image.alt = "";
-    image.draggable = false;
-
-    label.textContent = icon.label;
-
-    option.append(radio, image, label);
-    fragment.append(option);
-  });
+  for (const icon of iconCatalog) {
+    if (icon.id !== "link") {
+      fragment.append(createIconOption(icon));
+    }
+  }
 
   shortcutIconPicker.replaceChildren(fragment);
+}
+
+function updateSiteFaviconOption() {
+  const option = shortcutIconPicker.querySelector(`[data-icon-id="${SITE_ICON_ID}"]`);
+
+  if (!option) {
+    return;
+  }
+
+  const image = option.querySelector("img");
+  const radio = option.querySelector("input");
+  const fallback = findIcon("link");
+  const src = faviconSrc(normalizeShortcutUrl(shortcutUrlInput.value.trim()));
+
+  image.src = src || (fallback ? fallback.src : "");
+
+  if (src) {
+    radio.checked = true;
+  }
 }
 
 function normalizeStoredShortcut(shortcut) {
@@ -147,7 +330,7 @@ function normalizeStoredShortcut(shortcut) {
   const url = typeof shortcut.url === "string" ? normalizeShortcutUrl(shortcut.url) : "";
   const iconId = typeof shortcut.iconId === "string" ? shortcut.iconId : "";
 
-  if (!title || !url || !findIcon(iconId)) {
+  if (!title || !url || !isAllowedIconId(iconId)) {
     return null;
   }
 
@@ -155,10 +338,11 @@ function normalizeStoredShortcut(shortcut) {
 }
 
 async function initializeShortcuts() {
-  const [catalogResponse, { customShortcuts: storedShortcuts }] = await Promise.all([
+  const [catalogResponse, stored] = await Promise.all([
     fetch("icons/catalog.json"),
-    chrome.storage.local.get("customShortcuts")
+    chrome.storage.local.get(["customShortcuts", "hiddenDefaultShortcuts"])
   ]);
+  const { customShortcuts: storedShortcuts } = stored;
 
   const catalog = await catalogResponse.json();
 
@@ -176,6 +360,7 @@ async function initializeShortcuts() {
   customShortcuts = (Array.isArray(storedShortcuts) ? storedShortcuts : [])
     .map(normalizeStoredShortcut)
     .filter(Boolean);
+  hiddenDefaultShortcuts = normalizeHiddenDefaults(stored.hiddenDefaultShortcuts);
 
   renderIconPicker();
   renderShortcuts();
@@ -209,20 +394,66 @@ function renderSearchHistory() {
   const fragment = document.createDocumentFragment();
 
   for (const query of searchHistory) {
-    const item = document.createElement("button");
+    const item = document.createElement("div");
+    const button = document.createElement("button");
+    const remove = document.createElement("button");
+    const removeIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const removePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
     item.className = "search-history__item";
-    item.type = "button";
-    item.textContent = query;
-    item.addEventListener("click", () => {
+
+    button.className = "search-history__query";
+    button.type = "button";
+    button.textContent = query;
+    button.addEventListener("click", () => {
       input.value = query;
       form.requestSubmit();
     });
 
+    remove.className = "search-history__remove";
+    remove.type = "button";
+    remove.title = `Удалить ${query}`;
+    remove.setAttribute("aria-label", `Удалить ${query}`);
+
+    removeIcon.setAttribute("viewBox", "0 0 12 12");
+    removeIcon.setAttribute("aria-hidden", "true");
+    removePath.setAttribute("d", "M1.5 1.5 10.5 10.5M10.5 1.5 1.5 10.5");
+    removeIcon.append(removePath);
+
+    remove.append(removeIcon);
+    remove.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      void removeHistoryQuery(query);
+    });
+
+    item.append(button, remove);
     fragment.append(item);
   }
 
   history.replaceChildren(fragment);
+}
+
+async function removeHistoryQuery(query) {
+  await searchHistoryReady;
+
+  const { searchHistory: storedHistory } = await chrome.storage.local.get("searchHistory");
+  const currentHistory = Array.isArray(storedHistory)
+    ? normalizeSearchHistory(storedHistory)
+    : searchHistory;
+  const nextHistory = currentHistory.filter((item) => item !== query);
+
+  await chrome.storage.local.set({ searchHistory: nextHistory });
+  searchHistory = nextHistory;
+  renderSearchHistory();
+
+  if (!nextHistory.length) {
+    hideHistory();
+    input.focus();
+    return;
+  }
+
+  showHistory();
 }
 
 function showHistory() {
@@ -277,6 +508,10 @@ document.addEventListener("pointerdown", (event) => {
 });
 
 shell.addEventListener("focusout", (event) => {
+  if (!event.relatedTarget) {
+    return;
+  }
+
   if (!form.contains(event.relatedTarget) && !history.contains(event.relatedTarget)) {
     hideHistory();
   }
@@ -314,30 +549,25 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-shortcutPrevious.addEventListener("click", () => {
-  shortcutViewport.scrollBy({
-    left: -Math.max(240, shortcutViewport.clientWidth * 0.8),
-    behavior: "smooth"
-  });
-});
+gptForm.addEventListener("submit", () => {
+  const query = gptInput.value.trim();
 
-shortcutNext.addEventListener("click", () => {
-  shortcutViewport.scrollBy({
-    left: Math.max(240, shortcutViewport.clientWidth * 0.8),
-    behavior: "smooth"
-  });
+  if (query) {
+    void chrome.storage.session.set({ gptAutoSubmit: query });
+  }
 });
-
-shortcutViewport.addEventListener("scroll", updateCarouselControls, { passive: true });
-window.addEventListener("resize", updateCarouselControls);
 
 shortcutCancel.addEventListener("click", () => shortcutDialog.close());
 
-shortcutUrlInput.addEventListener("input", () => shortcutUrlInput.setCustomValidity(""));
+shortcutUrlInput.addEventListener("input", () => {
+  shortcutUrlInput.setCustomValidity("");
+  updateSiteFaviconOption();
+});
 
 shortcutDialog.addEventListener("close", () => {
   shortcutForm.reset();
   shortcutUrlInput.setCustomValidity("");
+  updateSiteFaviconOption();
 });
 
 shortcutForm.addEventListener("submit", async (event) => {
@@ -354,7 +584,12 @@ shortcutForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (!title || !findIcon(iconId)) {
+  if (!title || !isAllowedIconId(iconId)) {
+    return;
+  }
+
+  if (listVisibleShortcuts().length >= measureShortcutLayout().cellsMax) {
+    shortcutDialog.close();
     return;
   }
 
@@ -369,11 +604,15 @@ shortcutForm.addEventListener("submit", async (event) => {
   customShortcuts = nextShortcuts;
   shortcutDialog.close();
   renderShortcuts();
-  shortcutTrack.querySelector(".shortcut-card--add").focus({ preventScroll: true });
+  shortcutGrid.querySelector(".shortcut-card--add")?.focus({ preventScroll: true });
+});
 
-  requestAnimationFrame(() => {
-    shortcutViewport.scrollTo({ left: shortcutViewport.scrollWidth, behavior: "smooth" });
-  });
+window.addEventListener("resize", () => {
+  if (!iconCatalog.length) {
+    return;
+  }
+
+  renderShortcuts();
 });
 
 initializeShortcuts();
