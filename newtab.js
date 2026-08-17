@@ -2,7 +2,6 @@ const form = document.querySelector(".search");
 const input = document.querySelector(".search__input");
 const shell = document.querySelector(".search-shell");
 const history = document.querySelector(".search-history");
-const historyItem = document.querySelector(".search-history__item");
 const shortcutViewport = document.querySelector(".shortcut-viewport");
 const shortcutTrack = document.querySelector(".shortcut-track");
 const shortcutPrevious = document.querySelector(".shortcut-arrow--previous");
@@ -19,8 +18,9 @@ const defaultShortcuts = [
   { title: "Гугл Почта", url: "https://mail.google.com/", iconId: "gmail" },
   { title: "Яндекс Диск", url: "https://disk.yandex.ru/", iconId: "yandex-disk" }
 ];
+const SEARCH_HISTORY_LIMIT = 10;
 
-let lastQuery = "";
+let searchHistory = [];
 let iconCatalog = [];
 let customShortcuts = [];
 
@@ -181,8 +181,52 @@ async function initializeShortcuts() {
   renderShortcuts();
 }
 
+function normalizeSearchHistory(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const queries = [];
+
+  for (const item of value) {
+    const query = typeof item === "string" ? item.trim() : "";
+
+    if (!query || queries.includes(query)) {
+      continue;
+    }
+
+    queries.push(query);
+
+    if (queries.length === SEARCH_HISTORY_LIMIT) {
+      break;
+    }
+  }
+
+  return queries;
+}
+
+function renderSearchHistory() {
+  const fragment = document.createDocumentFragment();
+
+  for (const query of searchHistory) {
+    const item = document.createElement("button");
+
+    item.className = "search-history__item";
+    item.type = "button";
+    item.textContent = query;
+    item.addEventListener("click", () => {
+      input.value = query;
+      form.requestSubmit();
+    });
+
+    fragment.append(item);
+  }
+
+  history.replaceChildren(fragment);
+}
+
 function showHistory() {
-  if (!lastQuery) {
+  if (!searchHistory.length) {
     return;
   }
 
@@ -195,18 +239,27 @@ function hideHistory() {
   input.setAttribute("aria-expanded", "false");
 }
 
-chrome.storage.local.get("lastQuery").then(({ lastQuery: savedQuery }) => {
-  if (typeof savedQuery !== "string" || !savedQuery.trim()) {
-    return;
-  }
+const searchHistoryReady = chrome.storage.local
+  .get(["searchHistory", "lastQuery"])
+  .then(async ({ searchHistory: savedHistory, lastQuery: savedQuery }) => {
+    searchHistory = normalizeSearchHistory(savedHistory);
+    let shouldMigrate = false;
 
-  lastQuery = savedQuery.trim();
-  historyItem.textContent = lastQuery;
+    if (!searchHistory.length && typeof savedQuery === "string" && savedQuery.trim()) {
+      searchHistory = [savedQuery.trim()];
+      shouldMigrate = true;
+    }
 
-  if (document.activeElement === input) {
-    showHistory();
-  }
-});
+    renderSearchHistory();
+
+    if (document.activeElement === input) {
+      showHistory();
+    }
+
+    if (shouldMigrate) {
+      await chrome.storage.local.set({ searchHistory });
+    }
+  });
 
 input.addEventListener("focus", showHistory);
 input.addEventListener("click", showHistory);
@@ -229,11 +282,6 @@ shell.addEventListener("focusout", (event) => {
   }
 });
 
-historyItem.addEventListener("click", () => {
-  input.value = lastQuery;
-  form.requestSubmit();
-});
-
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -245,11 +293,22 @@ form.addEventListener("submit", async (event) => {
   }
 
   input.value = query;
-  lastQuery = query;
-  historyItem.textContent = query;
 
   try {
-    await chrome.storage.local.set({ lastQuery: query });
+    await searchHistoryReady;
+
+    const { searchHistory: storedHistory } = await chrome.storage.local.get("searchHistory");
+    const currentHistory = Array.isArray(storedHistory)
+      ? normalizeSearchHistory(storedHistory)
+      : searchHistory;
+    const nextHistory = [
+      query,
+      ...currentHistory.filter((item) => item !== query)
+    ].slice(0, SEARCH_HISTORY_LIMIT);
+
+    await chrome.storage.local.set({ searchHistory: nextHistory });
+    searchHistory = nextHistory;
+    renderSearchHistory();
   } finally {
     form.submit();
   }

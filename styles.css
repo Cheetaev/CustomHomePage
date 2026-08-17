@@ -240,8 +240,13 @@ body {
   top: calc(100% + 8px);
   left: 0;
   z-index: 1;
+  display: grid;
+  gap: 2px;
   width: 100%;
+  max-height: min(320px, calc(50dvh - 84px));
   padding: 4px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   background: #2a2a2a;
   border: 1px solid #3a3a3a;
   border-radius: 18px;
