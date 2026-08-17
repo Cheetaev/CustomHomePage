@@ -15,13 +15,12 @@
           class="search__input"
           type="search"
           name="text"
-          placeholder="Поиск в Яндексе"
           aria-label="Поиск в Яндексе"
           aria-controls="search-history"
           aria-expanded="false"
           autocomplete="off"
         >
-        <button class="search__button" type="submit">Найти</button>
+        <button class="search__button" type="submit" aria-label="Найти"></button>
       </form>
       <div class="search-history" id="search-history" aria-label="История поиска" hidden></div>
       <form
@@ -37,7 +36,6 @@
           class="gpt-search__input"
           type="text"
           name="q"
-          placeholder="Спросить ChatGPT"
           aria-label="Сообщение для ChatGPT"
           autocomplete="off"
           required
@@ -52,18 +50,37 @@
     <dialog class="shortcut-dialog" aria-labelledby="shortcut-dialog-title">
       <form class="shortcut-form" method="dialog">
         <h2 id="shortcut-dialog-title">Добавить ссылку</h2>
-        <label class="shortcut-field">
+        <div class="shortcut-field">
           <span>Название</span>
-          <input type="text" name="title" maxlength="24" autocomplete="off" required>
-        </label>
-        <label class="shortcut-field">
+          <input
+            type="text"
+            name="title"
+            maxlength="24"
+            autocomplete="off"
+            required
+            aria-autocomplete="list"
+            aria-controls="shortcut-title-suggestions"
+            aria-expanded="false"
+          >
+          <div class="shortcut-suggestions" id="shortcut-title-suggestions" hidden></div>
+        </div>
+        <div class="shortcut-field">
           <span>Ссылка</span>
-          <input type="url" name="url" placeholder="https://example.com" maxlength="2048" autocomplete="off" required>
-        </label>
-        <fieldset class="shortcut-icon-field">
-          <legend>Иконка</legend>
-          <div class="shortcut-icon-picker"></div>
-        </fieldset>
+          <input
+            class="shortcut-url-input"
+            type="text"
+            name="url"
+            placeholder="https://example.com"
+            maxlength="2048"
+            autocomplete="off"
+            spellcheck="false"
+            required
+            aria-autocomplete="list"
+            aria-controls="shortcut-suggestions"
+            aria-expanded="false"
+          >
+          <div class="shortcut-suggestions" id="shortcut-suggestions" hidden></div>
+        </div>
         <div class="shortcut-dialog__actions">
           <button class="shortcut-dialog__cancel" type="button">Отмена</button>
           <button class="shortcut-dialog__submit" type="submit">Добавить</button>

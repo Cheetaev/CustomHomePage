@@ -57,27 +57,18 @@ body {
   width: 104px;
   height: 84px;
   padding: 8px;
-  overflow: hidden;
+  overflow: visible;
   color: #f5f5f5;
   font: 400 13px/15px Arial, sans-serif;
   text-decoration: none;
-  background: #202020;
-  border: 1px solid #343434;
+  background: transparent;
+  border: 0;
   border-radius: 16px;
   cursor: pointer;
 }
 
 .shortcut-item .shortcut-card {
   width: 100%;
-}
-
-.shortcut-card:hover {
-  background: #292929;
-  border-color: #4a4a4a;
-}
-
-.shortcut-card:active {
-  background: #303030;
 }
 
 .shortcut-card:focus-visible {
@@ -102,6 +93,12 @@ body {
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
+  opacity: 0;
+}
+
+.shortcut-card:hover .shortcut-card__label,
+.shortcut-card:focus-visible .shortcut-card__label {
+  opacity: 1;
 }
 
 .shortcut-card__remove {
@@ -139,11 +136,6 @@ body {
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
-}
-
-.shortcut-card--add {
-  border-style: dashed;
-  border-color: #505050;
 }
 
 .shortcut-card__add-icon {
@@ -201,6 +193,7 @@ body {
 
 .search__button {
   height: 52px;
+  min-width: 104px;
   padding: 0 24px;
   color: #111111;
   font: 600 16px/1 Arial, sans-serif;
@@ -386,7 +379,7 @@ body {
   width: min(420px, calc(100vw - 32px));
   max-height: calc(100vh - 32px);
   padding: 0;
-  overflow: auto;
+  overflow: visible;
   color: #f5f5f5;
   background: #242424;
   border: 1px solid #3a3a3a;
@@ -409,12 +402,12 @@ body {
 }
 
 .shortcut-field {
+  position: relative;
   display: grid;
   gap: 8px;
 }
 
-.shortcut-field span,
-.shortcut-icon-field legend {
+.shortcut-field span {
   color: #d0d0d0;
   font: 400 14px/1.2 Arial, sans-serif;
 }
@@ -442,66 +435,51 @@ body {
   outline-offset: 1px;
 }
 
-.shortcut-icon-field {
-  min-width: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
-}
-
-.shortcut-icon-field legend {
-  padding: 0;
-  margin-bottom: 8px;
-}
-
-.shortcut-icon-picker {
+.shortcut-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 4;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-  gap: 10px;
+  gap: 2px;
+  width: 100%;
+  padding: 4px;
+  overflow: hidden;
+  background: #1b1b1b;
+  border: 1px solid #444444;
+  border-radius: 12px;
 }
 
-.shortcut-icon-option {
-  display: flex;
-  min-width: 0;
-  height: 76px;
-  padding: 8px 5px;
-  flex-direction: column;
-  gap: 6px;
-  align-items: center;
-  justify-content: center;
-  color: #cfcfcf;
-  background: #1b1b1b;
-  border: 1px solid #3d3d3d;
-  border-radius: 12px;
+.shortcut-suggestions[hidden] {
+  display: none;
+}
+
+.shortcut-suggestions__item {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 12px;
+  color: #f5f5f5;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.shortcut-icon-option:hover {
-  background: #303030;
-}
-
-.shortcut-icon-option:has(input:checked) {
-  color: #ffffff;
+.shortcut-suggestions__item:hover,
+.shortcut-suggestions__item.is-active {
   background: #333025;
-  border-color: #ffcc00;
 }
 
-.shortcut-icon-option:focus-within {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
+.shortcut-suggestions__title {
+  font: 400 14px/1.2 Arial, sans-serif;
 }
 
-.shortcut-icon-option img {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-}
-
-.shortcut-icon-option span {
-  width: 100%;
+.shortcut-suggestions__url {
   overflow: hidden;
-  font: 400 11px/13px Arial, sans-serif;
-  text-align: center;
+  color: #8f8f8f;
+  font: 400 12px/1.2 Arial, sans-serif;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -543,18 +521,6 @@ body {
 .shortcut-dialog__actions button:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 @media (max-width: 560px) {

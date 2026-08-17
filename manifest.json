@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Dark New Tab",
-  "version": "1.10.2",
+  "version": "1.12.0",
   "description": "Тёмная страница новой вкладки с быстрыми ссылками, поиском Яндекса и ChatGPT.",
   "permissions": [
     "storage",
@@ -13,7 +13,9 @@
   ],
   "optional_host_permissions": [
     "https://chatgpt.com/*",
-    "https://chat.openai.com/*"
+    "https://chat.openai.com/*",
+    "https://*/*",
+    "http://*/*"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
