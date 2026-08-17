@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Dark New Tab",
-  "version": "1.3.0",
-  "description": "Тёмная страница новой вкладки с поиском Яндекса и быстрым доступом к ChatGPT.",
+  "version": "1.4.0",
+  "description": "Тёмная страница новой вкладки с быстрыми ссылками, поиском Яндекса и ChatGPT.",
   "permissions": [
     "storage"
   ],

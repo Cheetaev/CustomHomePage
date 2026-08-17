@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="disk" x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#42b7ff"/>
+      <stop offset="1" stop-color="#0066ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#eaf7ff"/>
+  <path d="M19 44h29a9 9 0 0 0 1-18 14 14 0 0 0-27-2 10 10 0 0 0-3 20z" fill="url(#disk)"/>
+  <ellipse cx="34" cy="42" rx="15" ry="5" fill="#ffffff" fill-opacity=".7"/>
+</svg>
