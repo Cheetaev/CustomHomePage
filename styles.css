@@ -1,0 +1,12 @@
+:root {
+  background: #121212;
+  color-scheme: dark;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: #121212;
+}
