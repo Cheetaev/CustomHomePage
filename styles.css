@@ -21,6 +21,11 @@ body {
   place-items: center;
   min-height: 100vh;
   padding: 24px;
+  transition: padding-bottom 0.28s ease;
+}
+
+body.keyboard-open {
+  padding-bottom: calc(var(--keyboard-height, 280px) + 24px);
 }
 
 .search-shell {
@@ -191,6 +196,44 @@ body {
   opacity: 1;
 }
 
+.search__keyboard {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 44px;
+  height: 52px;
+  margin-right: 4px;
+  padding: 0;
+  color: #8f8f8f;
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.search__keyboard:hover {
+  color: #f5f5f5;
+}
+
+.search__keyboard.is-active {
+  color: #ffcc00;
+}
+
+.search__keyboard:focus-visible {
+  outline: 2px solid #ffcc00;
+  outline-offset: -2px;
+}
+
+.search__keyboard svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .search__button {
   height: 52px;
   min-width: 104px;
@@ -301,7 +344,8 @@ body {
   stroke-linecap: round;
 }
 
-.gpt-search {
+.gpt-search,
+.claude-search {
   position: absolute;
   top: calc(100% + 86px);
   right: 0;
@@ -313,16 +357,23 @@ body {
   border-radius: 25px;
 }
 
-.gpt-search:focus-within {
+.claude-search {
+  top: calc(100% + 148px);
+}
+
+.gpt-search:focus-within,
+.claude-search:focus-within {
   border-color: #707070;
 }
 
-.gpt-search:has(.gpt-search__input:focus-visible) {
+.gpt-search:has(.gpt-search__input:focus-visible),
+.claude-search:has(.claude-search__input:focus-visible) {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
-.gpt-search__input {
+.gpt-search__input,
+.claude-search__input {
   flex: 1;
   min-width: 0;
   height: 40px;
@@ -334,12 +385,14 @@ body {
   outline: 0;
 }
 
-.gpt-search__input::placeholder {
+.gpt-search__input::placeholder,
+.claude-search__input::placeholder {
   color: #9b9b9b;
   opacity: 1;
 }
 
-.gpt-search__button {
+.gpt-search__button,
+.claude-search__button {
   display: grid;
   place-items: center;
   width: 40px;
@@ -360,12 +413,27 @@ body {
   background: #d8d8d8;
 }
 
-.gpt-search__button:focus-visible {
+.claude-search__button {
+  color: #ffffff;
+  background: #d97757;
+}
+
+.claude-search__button:hover {
+  background: #e28a6c;
+}
+
+.claude-search__button:active {
+  background: #c9684a;
+}
+
+.gpt-search__button:focus-visible,
+.claude-search__button:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
-.gpt-search__button svg {
+.gpt-search__button svg,
+.claude-search__button svg {
   width: 20px;
   height: 20px;
   fill: none;
@@ -373,6 +441,130 @@ body {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  gap: 6px;
+  width: min(760px, 100vw - 32px);
+  padding: 12px 12px 16px;
+  background: #1c1c1c;
+  border: 1px solid #333333;
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -12px 40px rgb(0 0 0 / 45%);
+  transform: translate(-50%, 100%);
+  visibility: hidden;
+  transition: transform 0.28s ease, visibility 0s linear 0.28s;
+}
+
+.keyboard.is-open {
+  transform: translate(-50%, 0);
+  visibility: visible;
+  transition: transform 0.28s ease, visibility 0s;
+}
+
+.keyboard__row {
+  --key-gap: 6px;
+  --key-width: calc((100% - 11 * var(--key-gap)) / 12);
+
+  display: flex;
+  gap: var(--key-gap);
+  justify-content: center;
+}
+
+.keyboard__key {
+  position: relative;
+  display: grid;
+  flex: 0 0 var(--key-width);
+  place-items: center;
+  height: 46px;
+  padding: 0;
+  color: #f5f5f5;
+  font: 400 18px/1 Arial, sans-serif;
+  background: #2c2c2c;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.keyboard__key:hover {
+  background: #383838;
+}
+
+.keyboard__key:active {
+  background: #464646;
+  transform: scale(0.95);
+}
+
+.keyboard__key svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.keyboard__key--wide {
+  flex-basis: calc(var(--key-width) * 1.5 + var(--key-gap) / 2);
+  color: #d0d0d0;
+  font: 600 14px/1 Arial, sans-serif;
+  background: #232323;
+}
+
+.keyboard__key--wide:hover {
+  background: #2f2f2f;
+}
+
+.keyboard__key--space {
+  flex: 1 1 auto;
+  background: #232323;
+}
+
+.keyboard__key--space:hover {
+  background: #2f2f2f;
+}
+
+.keyboard__key--shift.is-active {
+  color: #111111;
+  background: #ffcc00;
+}
+
+.keyboard__key--shift.is-active:hover {
+  background: #ffd633;
+}
+
+.keyboard__key--shift.is-locked::after {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 5px;
+  height: 5px;
+  content: "";
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.keyboard__key--enter {
+  color: #111111;
+  background: #ffcc00;
+}
+
+.keyboard__key--enter:hover {
+  background: #ffd633;
+}
+
+.keyboard__key--enter:active {
+  background: #f2c200;
 }
 
 .shortcut-dialog {
@@ -544,5 +736,22 @@ body {
   .shortcut-card__add-icon {
     width: 36px;
     height: 36px;
+  }
+
+  .keyboard {
+    gap: 4px;
+    width: 100vw;
+    padding: 8px 8px 12px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .keyboard__row {
+    --key-gap: 4px;
+  }
+
+  .keyboard__key {
+    height: 40px;
+    font-size: 16px;
+    border-radius: 8px;
   }
 }

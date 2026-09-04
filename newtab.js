@@ -12,6 +12,8 @@ const shortcutTitleSuggestionsBox = document.querySelector("#shortcut-title-sugg
 const shortcutCancel = document.querySelector(".shortcut-dialog__cancel");
 const gptForm = document.querySelector(".gpt-search");
 const gptInput = document.querySelector(".gpt-search__input");
+const claudeForm = document.querySelector(".claude-search");
+const claudeInput = document.querySelector(".claude-search__input");
 
 const defaultShortcuts = [
   { title: "Яндекс Почта", url: "https://mail.yandex.ru/", iconId: "yandex-mail" },
@@ -995,6 +997,49 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
+function openAutosendChat({ url, origins, script, queryVariable, query }) {
+  const inject = async (tabId) => {
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        world: "MAIN",
+        func: (name, nextQuery) => {
+          window[name] = nextQuery;
+        },
+        args: [queryVariable, query]
+      });
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        world: "MAIN",
+        files: [script]
+      });
+    } catch {
+      return false;
+    }
+
+    return true;
+  };
+
+  const openChat = async () => {
+    const tab = await chrome.tabs.create({ url });
+    const listener = (tabId, info) => {
+      if (tabId === tab.id && info.status === "complete") {
+        chrome.tabs.onUpdated.removeListener(listener);
+        void inject(tab.id);
+      }
+    };
+
+    chrome.tabs.onUpdated.addListener(listener);
+    setTimeout(() => chrome.tabs.onUpdated.removeListener(listener), 25000);
+  };
+
+  const request = chrome.permissions?.request
+    ? chrome.permissions.request({ origins })
+    : Promise.resolve(true);
+
+  void request.catch(() => false).then(openChat);
+}
+
 gptForm.addEventListener("submit", (event) => {
   const query = gptInput.value.trim();
 
@@ -1008,48 +1053,35 @@ gptForm.addEventListener("submit", (event) => {
   url.searchParams.set("temporary-chat", "true");
   url.searchParams.set("q", query);
 
-  const inject = async (tabId) => {
-    try {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        world: "MAIN",
-        func: (nextQuery) => {
-          window.__DARK_NEW_TAB_GPT_QUERY = nextQuery;
-        },
-        args: [query]
-      });
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        world: "MAIN",
-        files: ["chatgpt-autosend.js"]
-      });
-    } catch {
-      return false;
-    }
+  openAutosendChat({
+    url: url.href,
+    origins: ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+    script: "chatgpt-autosend.js",
+    queryVariable: "__DARK_NEW_TAB_GPT_QUERY",
+    query
+  });
+});
 
-    return true;
-  };
+claudeForm.addEventListener("submit", (event) => {
+  const query = claudeInput.value.trim();
 
-  const openChat = async () => {
-    const tab = await chrome.tabs.create({ url: url.href });
-    const listener = (tabId, info) => {
-      if (tabId === tab.id && info.status === "complete") {
-        chrome.tabs.onUpdated.removeListener(listener);
-        void inject(tab.id);
-      }
-    };
+  if (!query) {
+    return;
+  }
 
-    chrome.tabs.onUpdated.addListener(listener);
-    setTimeout(() => chrome.tabs.onUpdated.removeListener(listener), 25000);
-  };
+  event.preventDefault();
 
-  const request = chrome.permissions?.request
-    ? chrome.permissions.request({
-        origins: ["https://chatgpt.com/*", "https://chat.openai.com/*"]
-      })
-    : Promise.resolve(true);
+  const url = new URL("https://claude.ai/new");
+  url.searchParams.set("incognito", "");
+  url.searchParams.set("q", query);
 
-  void request.catch(() => false).then(openChat);
+  openAutosendChat({
+    url: url.href,
+    origins: ["https://claude.ai/*"],
+    script: "claude-autosend.js",
+    queryVariable: "__DARK_NEW_TAB_CLAUDE_QUERY",
+    query
+  });
 });
 
 shortcutCancel.addEventListener("click", () => shortcutDialog.close());
@@ -1123,6 +1155,242 @@ shortcutForm.addEventListener("submit", async (event) => {
   shortcutDialog.close();
   renderShortcuts();
   shortcutGrid.querySelector(".shortcut-card--add")?.focus({ preventScroll: true });
+});
+
+const keyboard = document.querySelector(".keyboard");
+const keyboardToggle = document.querySelector(".search__keyboard");
+const KEYBOARD_LAYOUTS = {
+  ru: {
+    label: "RU",
+    rows: [
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+      ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ"],
+      ["ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "ё"],
+      ["я", "ч", "с", "м", "и", "т", "ь", "б", "ю"]
+    ]
+  },
+  en: {
+    label: "EN",
+    rows: [
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+      ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+      ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+      ["z", "x", "c", "v", "b", "n", "m"]
+    ]
+  }
+};
+const KEYBOARD_ICON_PATHS = {
+  shift: "M12 4l7 7.5h-4V19H9v-7.5H5z",
+  backspace: "M9 5h11v14H9l-6-7zM12 9l6 6M18 9l-6 6",
+  enter: "M20 5v6a2 2 0 0 1-2 2H5M8 9l-4 4 4 4"
+};
+const KEYBOARD_REPEAT_DELAY = 400;
+const KEYBOARD_REPEAT_INTERVAL = 60;
+const KEYBOARD_DOUBLE_TAP = 350;
+
+let keyboardLayout = "ru";
+let keyboardShift = "off";
+let keyboardTarget = input;
+let keyboardShiftTappedAt = 0;
+let keyboardRepeatTimer = 0;
+
+function createKeyboardKey(options) {
+  const key = document.createElement("button");
+
+  key.className = ["keyboard__key", ...(options.classes ?? [])].join(" ");
+  key.type = "button";
+  key.tabIndex = -1;
+
+  if (options.char) {
+    key.dataset.char = options.char;
+    key.textContent = keyboardShift === "off" ? options.char : options.char.toUpperCase();
+  }
+
+  if (options.action) {
+    key.dataset.action = options.action;
+  }
+
+  if (options.label) {
+    key.setAttribute("aria-label", options.label);
+  }
+
+  if (options.icon) {
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("aria-hidden", "true");
+    path.setAttribute("d", KEYBOARD_ICON_PATHS[options.icon]);
+    icon.append(path);
+    key.append(icon);
+  } else if (options.text) {
+    key.textContent = options.text;
+  }
+
+  return key;
+}
+
+function renderKeyboard() {
+  const layout = KEYBOARD_LAYOUTS[keyboardLayout];
+  const fragment = document.createDocumentFragment();
+  const shiftClasses = ["keyboard__key--wide", "keyboard__key--shift"];
+
+  if (keyboardShift !== "off") {
+    shiftClasses.push("is-active");
+  }
+
+  if (keyboardShift === "locked") {
+    shiftClasses.push("is-locked");
+  }
+
+  layout.rows.forEach((chars, index) => {
+    const row = document.createElement("div");
+    const isLastRow = index === layout.rows.length - 1;
+
+    row.className = "keyboard__row";
+
+    if (isLastRow) {
+      row.append(createKeyboardKey({ action: "shift", icon: "shift", label: "Shift", classes: shiftClasses }));
+    }
+
+    row.append(...chars.map((char) => createKeyboardKey({ char })));
+
+    if (isLastRow) {
+      row.append(
+        createKeyboardKey({ action: "backspace", icon: "backspace", label: "Backspace", classes: ["keyboard__key--wide"] })
+      );
+    }
+
+    fragment.append(row);
+  });
+
+  const bottomRow = document.createElement("div");
+
+  bottomRow.className = "keyboard__row";
+  bottomRow.append(
+    createKeyboardKey({ action: "layout", text: layout.label, label: "Сменить язык", classes: ["keyboard__key--wide"] }),
+    createKeyboardKey({ char: "," }),
+    createKeyboardKey({ char: " ", label: "Пробел", classes: ["keyboard__key--space"] }),
+    createKeyboardKey({ char: "." }),
+    createKeyboardKey({ action: "enter", icon: "enter", label: "Ввод", classes: ["keyboard__key--wide", "keyboard__key--enter"] })
+  );
+  fragment.append(bottomRow);
+  keyboard.replaceChildren(fragment);
+}
+
+function setKeyboardShift(state) {
+  keyboardShift = state;
+  renderKeyboard();
+}
+
+function setKeyboardLayout(layout) {
+  keyboardLayout = layout;
+  renderKeyboard();
+  void chrome.storage.local.set({ keyboardLayout: layout });
+}
+
+function insertKeyboardText(text) {
+  const start = keyboardTarget.selectionStart;
+  const end = keyboardTarget.selectionEnd;
+
+  keyboardTarget.focus({ preventScroll: true });
+  keyboardTarget.setRangeText(text, start, end, "end");
+  keyboardTarget.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function deleteKeyboardText() {
+  const end = keyboardTarget.selectionEnd;
+  const start = keyboardTarget.selectionStart === end ? end - 1 : keyboardTarget.selectionStart;
+
+  if (start < 0) {
+    return;
+  }
+
+  keyboardTarget.focus({ preventScroll: true });
+  keyboardTarget.setRangeText("", start, end, "end");
+  keyboardTarget.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function stopKeyboardRepeat() {
+  clearTimeout(keyboardRepeatTimer);
+  keyboardRepeatTimer = 0;
+}
+
+function pressKeyboardKey(key) {
+  const { char, action } = key.dataset;
+
+  if (char) {
+    insertKeyboardText(keyboardShift === "off" ? char : char.toUpperCase());
+
+    if (keyboardShift === "once") {
+      setKeyboardShift("off");
+    }
+
+    return;
+  }
+
+  if (action === "backspace") {
+    deleteKeyboardText();
+    keyboardRepeatTimer = setTimeout(() => {
+      keyboardRepeatTimer = setInterval(deleteKeyboardText, KEYBOARD_REPEAT_INTERVAL);
+    }, KEYBOARD_REPEAT_DELAY);
+  } else if (action === "shift") {
+    const now = Date.now();
+    const isDoubleTap = keyboardShift === "once" && now - keyboardShiftTappedAt < KEYBOARD_DOUBLE_TAP;
+
+    keyboardShiftTappedAt = now;
+    setKeyboardShift(isDoubleTap ? "locked" : keyboardShift === "off" ? "once" : "off");
+  } else if (action === "layout") {
+    setKeyboardLayout(keyboardLayout === "ru" ? "en" : "ru");
+  } else if (action === "enter" && keyboardTarget.value.trim()) {
+    keyboardTarget.form.requestSubmit();
+  }
+}
+
+function setKeyboardOpen(open) {
+  keyboard.classList.toggle("is-open", open);
+  document.body.classList.toggle("keyboard-open", open);
+  keyboardToggle.classList.toggle("is-active", open);
+  keyboardToggle.setAttribute("aria-expanded", String(open));
+
+  if (open) {
+    keyboardTarget.focus({ preventScroll: true });
+  }
+}
+
+keyboard.addEventListener("mousedown", (event) => event.preventDefault());
+keyboard.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+
+  const key = event.target.closest(".keyboard__key");
+
+  if (key && event.button === 0) {
+    pressKeyboardKey(key);
+  }
+});
+window.addEventListener("pointerup", stopKeyboardRepeat);
+window.addEventListener("pointercancel", stopKeyboardRepeat);
+
+keyboardToggle.addEventListener("click", () => {
+  setKeyboardOpen(!keyboard.classList.contains("is-open"));
+});
+
+for (const field of [input, gptInput, claudeInput]) {
+  field.addEventListener("focus", () => {
+    keyboardTarget = field;
+  });
+}
+
+new ResizeObserver(() => {
+  document.body.style.setProperty("--keyboard-height", `${keyboard.offsetHeight}px`);
+}).observe(keyboard);
+
+renderKeyboard();
+chrome.storage.local.get("keyboardLayout").then(({ keyboardLayout: savedLayout }) => {
+  if (Object.hasOwn(KEYBOARD_LAYOUTS, savedLayout) && savedLayout !== keyboardLayout) {
+    keyboardLayout = savedLayout;
+    renderKeyboard();
+  }
 });
 
 window.addEventListener("resize", () => {

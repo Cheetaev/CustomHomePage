@@ -20,6 +20,18 @@
           aria-expanded="false"
           autocomplete="off"
         >
+        <button
+          class="search__keyboard"
+          type="button"
+          aria-label="Экранная клавиатура"
+          aria-controls="keyboard"
+          aria-expanded="false"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2" y="6" width="20" height="12" rx="2.5"></rect>
+            <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9.5 14h5"></path>
+          </svg>
+        </button>
         <button class="search__button" type="submit" aria-label="Найти"></button>
       </form>
       <div class="search-history" id="search-history" aria-label="История поиска" hidden></div>
@@ -46,7 +58,31 @@
           </svg>
         </button>
       </form>
+      <form
+        class="claude-search"
+        action="https://claude.ai/new"
+        method="get"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Инкогнито-чат Claude"
+      >
+        <input type="hidden" name="incognito" value="">
+        <input
+          class="claude-search__input"
+          type="text"
+          name="q"
+          aria-label="Сообщение для Claude"
+          autocomplete="off"
+          required
+        >
+        <button class="claude-search__button" type="submit" aria-label="Отправить в Claude">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M10 15V5M6 9l4-4 4 4"></path>
+          </svg>
+        </button>
+      </form>
     </div>
+    <div class="keyboard" id="keyboard" role="group" aria-label="Экранная клавиатура"></div>
     <dialog class="shortcut-dialog" aria-labelledby="shortcut-dialog-title">
       <form class="shortcut-form" method="dialog">
         <h2 id="shortcut-dialog-title">Добавить ссылку</h2>
