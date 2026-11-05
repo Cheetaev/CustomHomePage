@@ -9,78 +9,65 @@
   </head>
   <body>
     <div class="search-shell">
-      <nav class="shortcut-grid" aria-label="Быстрые ссылки"></nav>
-      <form class="search" action="https://yandex.ru/search/" method="get" role="search">
-        <input
-          class="search__input"
-          type="search"
-          name="text"
-          aria-label="Поиск в Яндексе"
-          aria-controls="search-history"
-          aria-expanded="false"
-          autocomplete="off"
-        >
-        <button
-          class="search__keyboard"
-          type="button"
-          aria-label="Экранная клавиатура"
-          aria-controls="keyboard"
-          aria-expanded="false"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2" y="6" width="20" height="12" rx="2.5"></rect>
-            <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9.5 14h5"></path>
-          </svg>
-        </button>
-        <button class="search__button" type="submit" aria-label="Найти"></button>
-      </form>
-      <div class="search-history" id="search-history" aria-label="История поиска" hidden></div>
-      <form
-        class="gpt-search"
-        action="https://chatgpt.com/"
-        method="get"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Временный чат ChatGPT"
-      >
-        <input type="hidden" name="temporary-chat" value="true">
-        <input
-          class="gpt-search__input"
-          type="text"
-          name="q"
-          aria-label="Сообщение для ChatGPT"
-          autocomplete="off"
-          required
-        >
-        <button class="gpt-search__button" type="submit" aria-label="Отправить в ChatGPT">
-          <svg viewBox="0 0 20 20" aria-hidden="true">
-            <path d="M10 15V5M6 9l4-4 4 4"></path>
-          </svg>
-        </button>
-      </form>
-      <form
-        class="claude-search"
-        action="https://claude.ai/new"
-        method="get"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Инкогнито-чат Claude"
-      >
-        <input type="hidden" name="incognito" value="">
-        <input
-          class="claude-search__input"
-          type="text"
-          name="q"
-          aria-label="Сообщение для Claude"
-          autocomplete="off"
-          required
-        >
-        <button class="claude-search__button" type="submit" aria-label="Отправить в Claude">
-          <svg viewBox="0 0 20 20" aria-hidden="true">
-            <path d="M10 15V5M6 9l4-4 4 4"></path>
-          </svg>
-        </button>
-      </form>
+      <div class="web-searches">
+        <div class="search-panel">
+          <form class="search" action="https://yandex.ru/search/" method="get" role="search" aria-label="Яндекс" data-history-key="yandexSearchHistory">
+            <input
+              class="search__input"
+              type="text"
+              enterkeyhint="search"
+              name="text"
+              placeholder="Яндекс"
+              aria-label="Поиск в Яндексе"
+              aria-controls="yandex-history"
+              aria-expanded="false"
+              autocomplete="off"
+            >
+            <button class="search__button" type="submit">Найти</button>
+          </form>
+          <div class="search-history" id="yandex-history" aria-label="История поиска Яндекс" role="group" inert>
+            <div class="search-history__list"></div>
+          </div>
+        </div>
+        <div class="search-panel search--google">
+          <form class="search" action="https://www.google.com/search" method="get" role="search" aria-label="Google" data-history-key="googleSearchHistory">
+            <input
+              class="search__input"
+              type="text"
+              enterkeyhint="search"
+              name="q"
+              placeholder="Google"
+              aria-label="Поиск в Google"
+              aria-controls="google-history"
+              aria-expanded="false"
+              autocomplete="off"
+            >
+            <button class="search__button" type="submit">Найти</button>
+          </form>
+          <div class="search-history" id="google-history" aria-label="История поиска Google" role="group" inert>
+            <div class="search-history__list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="shortcut-scroll">
+        <nav class="shortcut-grid" aria-label="Быстрые ссылки">
+          <a class="weather-widget" href="https://yandex.ru/pogoda/ru/moscow" aria-label="Открыть Яндекс Погоду для Москвы">
+            <div class="weather-widget__card">
+              <div class="weather-widget__city">Москва</div>
+              <div class="weather-widget__temperature">—</div>
+              <div class="weather-widget__details">
+                <div class="weather-widget__icon" aria-hidden="true"></div>
+                <div class="weather-widget__condition" role="status">Загрузка погоды…</div>
+                <div class="weather-widget__range"></div>
+              </div>
+            </div>
+            <div class="weather-widget__label" aria-hidden="true">Погода</div>
+          </a>
+        </nav>
+      </div>
+    </div>
+    <div class="shortcut-backup">
+      <span id="shortcut-backup-status" role="status"></span>
     </div>
     <div class="keyboard" id="keyboard" role="group" aria-label="Экранная клавиатура"></div>
     <dialog class="shortcut-dialog" aria-labelledby="shortcut-dialog-title">
@@ -88,34 +75,53 @@
         <h2 id="shortcut-dialog-title">Добавить ссылку</h2>
         <div class="shortcut-field">
           <span>Название</span>
-          <input
-            type="text"
-            name="title"
-            maxlength="24"
-            autocomplete="off"
-            required
-            aria-autocomplete="list"
-            aria-controls="shortcut-title-suggestions"
-            aria-expanded="false"
-          >
-          <div class="shortcut-suggestions" id="shortcut-title-suggestions" hidden></div>
+          <div class="shortcut-field__control">
+            <input
+              type="text"
+              name="title"
+              maxlength="24"
+              autocomplete="off"
+              required
+              aria-autocomplete="list"
+              aria-controls="shortcut-title-suggestions"
+              aria-expanded="false"
+            >
+            <div class="search-history shortcut-suggestions" id="shortcut-title-suggestions" inert>
+              <div class="search-history__list"></div>
+            </div>
+          </div>
         </div>
         <div class="shortcut-field">
           <span>Ссылка</span>
-          <input
-            class="shortcut-url-input"
-            type="text"
-            name="url"
-            placeholder="https://example.com"
-            maxlength="2048"
-            autocomplete="off"
-            spellcheck="false"
-            required
-            aria-autocomplete="list"
-            aria-controls="shortcut-suggestions"
-            aria-expanded="false"
-          >
-          <div class="shortcut-suggestions" id="shortcut-suggestions" hidden></div>
+          <div class="shortcut-url-row">
+            <div class="shortcut-icon-preview">
+              <img class="shortcut-icon-preview__image" src="icons/link.svg" alt="Предпросмотр иконки">
+              <button class="shortcut-icon-preview__lock" type="button" aria-label="Закрепить иконку" aria-pressed="false" title="Закрепить иконку" disabled>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="3" y="7" width="10" height="7" rx="1.5"/>
+                  <path class="shortcut-icon-preview__shackle" d="M5 7V5a3 3 0 0 1 6 0"/>
+                </svg>
+              </button>
+            </div>
+            <div class="shortcut-field__control">
+              <input
+                class="shortcut-url-input"
+                type="text"
+                name="url"
+                placeholder="https://example.com"
+                maxlength="2048"
+                autocomplete="off"
+                spellcheck="false"
+                required
+                aria-autocomplete="list"
+                aria-controls="shortcut-suggestions"
+                aria-expanded="false"
+              >
+              <div class="search-history shortcut-suggestions" id="shortcut-suggestions" inert>
+                <div class="search-history__list"></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="shortcut-dialog__actions">
           <button class="shortcut-dialog__cancel" type="button">Отмена</button>

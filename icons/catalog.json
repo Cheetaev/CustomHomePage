@@ -2,26 +2,784 @@
   {
     "id": "yandex-mail",
     "label": "Яндекс Почта",
-    "src": "icons/yandex-mail.svg"
+    "src": "icons/app-store/yandex-mail.jpg",
+    "sites": [
+      "mail.yandex.ru",
+      "mail.yandex.com"
+    ],
+    "appStoreId": "441785419"
   },
   {
     "id": "yandex-maps",
     "label": "Яндекс Карты",
-    "src": "icons/yandex-maps.svg"
+    "src": "icons/app-store/yandex-maps.jpg",
+    "sites": [
+      "yandex.ru/maps",
+      "yandex.com/maps",
+      "yandex.ru/navi"
+    ],
+    "appStoreId": "313877526"
   },
   {
     "id": "gmail",
     "label": "Gmail",
-    "src": "icons/gmail.svg"
+    "src": "icons/app-store/gmail.jpg",
+    "sites": [
+      "mail.google.com",
+      "gmail.com"
+    ],
+    "appStoreId": "422689480"
   },
   {
     "id": "yandex-disk",
     "label": "Яндекс Диск",
-    "src": "icons/yandex-disk.svg"
+    "src": "icons/app-store/yandex-disk.jpg",
+    "sites": [
+      "disk.yandex.ru",
+      "disk.yandex.com"
+    ],
+    "appStoreId": "553266487"
   },
   {
     "id": "link",
     "label": "Ссылка",
     "src": "icons/link.svg"
+  },
+  {
+    "id": "keenetic",
+    "label": "Keenetic",
+    "src": "icons/app-store/keenetic.jpg",
+    "sites": [
+      "keenetic.com",
+      "keenetic.net",
+      "my.keenetic.net"
+    ],
+    "appStoreId": "1413650865"
+  },
+  {
+    "id": "netcraze",
+    "label": "Netcraze",
+    "src": "icons/app-store/netcraze.jpg",
+    "sites": [
+      "netcraze.ru"
+    ],
+    "appStoreId": "6738113127"
+  },
+  {
+    "id": "google-maps",
+    "label": "Google Карты",
+    "src": "icons/app-store/google-maps.jpg",
+    "sites": [
+      "maps.google.com",
+      "google.com/maps",
+      "maps.app.goo.gl"
+    ],
+    "appStoreId": "585027354"
+  },
+  {
+    "id": "google",
+    "label": "Google",
+    "src": "icons/app-store/google.jpg",
+    "sites": [
+      "google.com",
+      "google.ru"
+    ],
+    "appStoreId": "284815942"
+  },
+  {
+    "id": "youtube",
+    "label": "YouTube",
+    "src": "icons/app-store/youtube.jpg",
+    "sites": [
+      "youtube.com",
+      "m.youtube.com",
+      "youtu.be"
+    ],
+    "appStoreId": "544007664"
+  },
+  {
+    "id": "youtube-music",
+    "label": "YouTube Music - музыка и клипы",
+    "src": "icons/app-store/youtube-music.jpg",
+    "sites": [
+      "music.youtube.com"
+    ],
+    "appStoreId": "1017492454"
+  },
+  {
+    "id": "google-drive",
+    "label": "Google Drive – хранилище",
+    "src": "icons/app-store/google-drive.jpg",
+    "sites": [
+      "drive.google.com"
+    ],
+    "appStoreId": "507874739"
+  },
+  {
+    "id": "google-docs",
+    "label": "Google Документы",
+    "src": "icons/app-store/google-docs.jpg",
+    "sites": [
+      "docs.google.com/document"
+    ],
+    "appStoreId": "842842640"
+  },
+  {
+    "id": "google-sheets",
+    "label": "Google Таблицы",
+    "src": "icons/app-store/google-sheets.jpg",
+    "sites": [
+      "docs.google.com/spreadsheets"
+    ],
+    "appStoreId": "842849113"
+  },
+  {
+    "id": "google-slides",
+    "label": "Google Презентации",
+    "src": "icons/app-store/google-slides.jpg",
+    "sites": [
+      "docs.google.com/presentation"
+    ],
+    "appStoreId": "879478102"
+  },
+  {
+    "id": "google-photos",
+    "label": "Google Фото",
+    "src": "icons/app-store/google-photos.jpg",
+    "sites": [
+      "photos.google.com"
+    ],
+    "appStoreId": "962194608"
+  },
+  {
+    "id": "google-calendar",
+    "label": "Календарь: всё под контролем",
+    "src": "icons/app-store/google-calendar.jpg",
+    "sites": [
+      "calendar.google.com"
+    ],
+    "appStoreId": "909319292"
+  },
+  {
+    "id": "google-translate",
+    "label": "Google Переводчик",
+    "src": "icons/app-store/google-translate.jpg",
+    "sites": [
+      "translate.google.com"
+    ],
+    "appStoreId": "414706506"
+  },
+  {
+    "id": "google-meet",
+    "label": "Google Meet",
+    "src": "icons/app-store/google-meet.jpg",
+    "sites": [
+      "meet.google.com"
+    ],
+    "appStoreId": "1096918571"
+  },
+  {
+    "id": "chrome",
+    "label": "Chrome – браузер от Google",
+    "src": "icons/app-store/chrome.jpg",
+    "sites": [
+      "google.com/chrome"
+    ],
+    "appStoreId": "535886823"
+  },
+  {
+    "id": "telegram",
+    "label": "Telegram Messenger",
+    "src": "icons/app-store/telegram.jpg",
+    "sites": [
+      "telegram.org",
+      "t.me",
+      "web.telegram.org"
+    ],
+    "appStoreId": "686449807"
+  },
+  {
+    "id": "whatsapp",
+    "label": "WhatsApp Messenger",
+    "src": "icons/app-store/whatsapp.jpg",
+    "sites": [
+      "whatsapp.com",
+      "web.whatsapp.com"
+    ],
+    "appStoreId": "310633997"
+  },
+  {
+    "id": "discord",
+    "label": "Общайтесь и играйте с Discord",
+    "src": "icons/app-store/discord.jpg",
+    "sites": [
+      "discord.com",
+      "discord.gg"
+    ],
+    "appStoreId": "985746746"
+  },
+  {
+    "id": "slack",
+    "label": "Slack",
+    "src": "icons/app-store/slack.jpg",
+    "sites": [
+      "slack.com",
+      "app.slack.com"
+    ],
+    "appStoreId": "618783545"
+  },
+  {
+    "id": "signal",
+    "label": "Signal — приватный мессенджер",
+    "src": "icons/app-store/signal.jpg",
+    "sites": [
+      "signal.org"
+    ],
+    "appStoreId": "874139669"
+  },
+  {
+    "id": "instagram",
+    "label": "Instagram",
+    "src": "icons/app-store/instagram.jpg",
+    "sites": [
+      "instagram.com"
+    ],
+    "appStoreId": "389801252"
+  },
+  {
+    "id": "facebook",
+    "label": "Facebook",
+    "src": "icons/app-store/facebook.jpg",
+    "sites": [
+      "facebook.com",
+      "m.facebook.com"
+    ],
+    "appStoreId": "284882215"
+  },
+  {
+    "id": "messenger",
+    "label": "Messenger",
+    "src": "icons/app-store/messenger.jpg",
+    "sites": [
+      "messenger.com"
+    ],
+    "appStoreId": "454638411"
+  },
+  {
+    "id": "threads",
+    "label": "Threads",
+    "src": "icons/app-store/threads.jpg",
+    "sites": [
+      "threads.net",
+      "threads.com"
+    ],
+    "appStoreId": "6446901002"
+  },
+  {
+    "id": "x",
+    "label": "X",
+    "src": "icons/app-store/x.jpg",
+    "sites": [
+      "x.com",
+      "twitter.com"
+    ],
+    "appStoreId": "333903271"
+  },
+  {
+    "id": "reddit",
+    "label": "Reddit",
+    "src": "icons/app-store/reddit.jpg",
+    "sites": [
+      "reddit.com"
+    ],
+    "appStoreId": "1064216828"
+  },
+  {
+    "id": "pinterest",
+    "label": "Pinterest",
+    "src": "icons/app-store/pinterest.jpg",
+    "sites": [
+      "pinterest.com",
+      "pinterest.ru"
+    ],
+    "appStoreId": "429047995"
+  },
+  {
+    "id": "linkedin",
+    "label": "LinkedIn: Community & Network",
+    "src": "icons/app-store/linkedin.jpg",
+    "sites": [
+      "linkedin.com"
+    ],
+    "appStoreId": "288429040"
+  },
+  {
+    "id": "tiktok",
+    "label": "TikTok(ТикТок)",
+    "src": "icons/app-store/tiktok.jpg",
+    "sites": [
+      "tiktok.com"
+    ],
+    "appStoreId": "835599320"
+  },
+  {
+    "id": "snapchat",
+    "label": "Snapchat: чат с друзьями",
+    "src": "icons/app-store/snapchat.jpg",
+    "sites": [
+      "snapchat.com"
+    ],
+    "appStoreId": "447188370"
+  },
+  {
+    "id": "spotify",
+    "label": "Spotify: Music and Podcasts",
+    "src": "icons/app-store/spotify.jpg",
+    "sites": [
+      "spotify.com",
+      "open.spotify.com"
+    ],
+    "appStoreId": "324684580"
+  },
+  {
+    "id": "shazam",
+    "label": "Shazam",
+    "src": "icons/app-store/shazam.jpg",
+    "sites": [
+      "shazam.com"
+    ],
+    "appStoreId": "284993459"
+  },
+  {
+    "id": "apple-music",
+    "label": "Apple Music",
+    "src": "icons/app-store/apple-music.jpg",
+    "sites": [
+      "music.apple.com"
+    ],
+    "appStoreId": "1108187390"
+  },
+  {
+    "id": "netflix",
+    "label": "Netflix",
+    "src": "icons/app-store/netflix.jpg",
+    "sites": [
+      "netflix.com"
+    ],
+    "appStoreId": "363590051"
+  },
+  {
+    "id": "twitch",
+    "label": "Twitch: прямые трансляции",
+    "src": "icons/app-store/twitch.jpg",
+    "sites": [
+      "twitch.tv"
+    ],
+    "appStoreId": "460177396"
+  },
+  {
+    "id": "disney-plus",
+    "label": "Disney+",
+    "src": "icons/app-store/disney-plus.jpg",
+    "sites": [
+      "disneyplus.com"
+    ],
+    "appStoreId": "1446075923"
+  },
+  {
+    "id": "prime-video",
+    "label": "Amazon Prime Video",
+    "src": "icons/app-store/prime-video.jpg",
+    "sites": [
+      "primevideo.com"
+    ],
+    "appStoreId": "545519333"
+  },
+  {
+    "id": "soundcloud",
+    "label": "SoundCloud - музыка и звук",
+    "src": "icons/app-store/soundcloud.jpg",
+    "sites": [
+      "soundcloud.com"
+    ],
+    "appStoreId": "336353151"
+  },
+  {
+    "id": "plex",
+    "label": "Plex: Find Movies and TV Shows",
+    "src": "icons/app-store/plex.jpg",
+    "sites": [
+      "plex.tv",
+      "app.plex.tv"
+    ],
+    "appStoreId": "383457673"
+  },
+  {
+    "id": "steam",
+    "label": "Steam Mobile",
+    "src": "icons/app-store/steam.jpg",
+    "sites": [
+      "steampowered.com",
+      "store.steampowered.com",
+      "steamcommunity.com"
+    ],
+    "appStoreId": "495369748"
+  },
+  {
+    "id": "playstation",
+    "label": "PlayStation App",
+    "src": "icons/app-store/playstation.jpg",
+    "sites": [
+      "playstation.com",
+      "store.playstation.com"
+    ],
+    "appStoreId": "410896080"
+  },
+  {
+    "id": "xbox",
+    "label": "XBOX",
+    "src": "icons/app-store/xbox.jpg",
+    "sites": [
+      "xbox.com"
+    ],
+    "appStoreId": "736179781"
+  },
+  {
+    "id": "github",
+    "label": "GitHub",
+    "src": "icons/app-store/github.jpg",
+    "sites": [
+      "github.com"
+    ],
+    "appStoreId": "1477376905"
+  },
+  {
+    "id": "notion",
+    "label": "Notion: Notes, Tasks, AI",
+    "src": "icons/app-store/notion.jpg",
+    "sites": [
+      "notion.so",
+      "notion.site"
+    ],
+    "appStoreId": "1232780281"
+  },
+  {
+    "id": "figma",
+    "label": "Figma",
+    "src": "icons/app-store/figma.jpg",
+    "sites": [
+      "figma.com"
+    ],
+    "appStoreId": "1152747299"
+  },
+  {
+    "id": "trello",
+    "label": "Trello: Daily Task Tracker",
+    "src": "icons/app-store/trello.jpg",
+    "sites": [
+      "trello.com"
+    ],
+    "appStoreId": "461504587"
+  },
+  {
+    "id": "asana",
+    "label": "Asana: Where work connects",
+    "src": "icons/app-store/asana.jpg",
+    "sites": [
+      "asana.com",
+      "app.asana.com"
+    ],
+    "appStoreId": "489969512"
+  },
+  {
+    "id": "dropbox",
+    "label": "Dropbox: Облачное хранилище",
+    "src": "icons/app-store/dropbox.jpg",
+    "sites": [
+      "dropbox.com"
+    ],
+    "appStoreId": "327630330"
+  },
+  {
+    "id": "onedrive",
+    "label": "Microsoft OneDrive",
+    "src": "icons/app-store/onedrive.jpg",
+    "sites": [
+      "onedrive.live.com"
+    ],
+    "appStoreId": "477537958"
+  },
+  {
+    "id": "outlook",
+    "label": "Microsoft Outlook",
+    "src": "icons/app-store/outlook.jpg",
+    "sites": [
+      "outlook.com",
+      "outlook.live.com",
+      "outlook.office.com"
+    ],
+    "appStoreId": "951937596"
+  },
+  {
+    "id": "microsoft-teams",
+    "label": "Microsoft Teams",
+    "src": "icons/app-store/microsoft-teams.jpg",
+    "sites": [
+      "teams.microsoft.com",
+      "teams.live.com"
+    ],
+    "appStoreId": "1113153706"
+  },
+  {
+    "id": "zoom",
+    "label": "Zoom Workplace",
+    "src": "icons/app-store/zoom.jpg",
+    "sites": [
+      "zoom.us",
+      "zoom.com"
+    ],
+    "appStoreId": "546505307"
+  },
+  {
+    "id": "adobe-acrobat",
+    "label": "Adobe Acrobat Reader: Edit PDF",
+    "src": "icons/app-store/adobe-acrobat.jpg",
+    "sites": [
+      "acrobat.adobe.com"
+    ],
+    "appStoreId": "469337564"
+  },
+  {
+    "id": "canva",
+    "label": "Canva AI Photo & Video Editor",
+    "src": "icons/app-store/canva.jpg",
+    "sites": [
+      "canva.com"
+    ],
+    "appStoreId": "897446215"
+  },
+  {
+    "id": "chatgpt",
+    "label": "ChatGPT",
+    "src": "icons/app-store/chatgpt.jpg",
+    "sites": [
+      "chatgpt.com",
+      "chat.openai.com"
+    ],
+    "appStoreId": "6448311069"
+  },
+  {
+    "id": "claude",
+    "label": "Claude by Anthropic",
+    "src": "icons/app-store/claude.jpg",
+    "sites": [
+      "claude.ai"
+    ],
+    "appStoreId": "6473753684"
+  },
+  {
+    "id": "perplexity",
+    "label": "Perplexity — ИИ-поиск и чат",
+    "src": "icons/app-store/perplexity.jpg",
+    "sites": [
+      "perplexity.ai"
+    ],
+    "appStoreId": "1668000334"
+  },
+  {
+    "id": "duolingo",
+    "label": "Duolingo – языки и шахматы",
+    "src": "icons/app-store/duolingo.jpg",
+    "sites": [
+      "duolingo.com"
+    ],
+    "appStoreId": "570060128"
+  },
+  {
+    "id": "wikipedia",
+    "label": "Википедия",
+    "src": "icons/app-store/wikipedia.jpg",
+    "sites": [
+      "wikipedia.org",
+      "ru.wikipedia.org",
+      "en.wikipedia.org"
+    ],
+    "appStoreId": "324715238"
+  },
+  {
+    "id": "deepl",
+    "label": "DeepL Translate",
+    "src": "icons/app-store/deepl.jpg",
+    "sites": [
+      "deepl.com"
+    ],
+    "appStoreId": "1552407475"
+  },
+  {
+    "id": "amazon",
+    "label": "Amazon Shopping",
+    "src": "icons/app-store/amazon.jpg",
+    "sites": [
+      "amazon.com",
+      "amazon.de",
+      "amazon.co.uk"
+    ],
+    "appStoreId": "297606951"
+  },
+  {
+    "id": "ebay",
+    "label": "eBay",
+    "src": "icons/app-store/ebay.jpg",
+    "sites": [
+      "ebay.com"
+    ],
+    "appStoreId": "282614216"
+  },
+  {
+    "id": "aliexpress",
+    "label": "AliExpress - Shopping App",
+    "src": "icons/app-store/aliexpress.jpg",
+    "sites": [
+      "aliexpress.com",
+      "aliexpress.ru"
+    ],
+    "appStoreId": "436672029"
+  },
+  {
+    "id": "etsy",
+    "label": "Etsy — мир уникальных товаров",
+    "src": "icons/app-store/etsy.jpg",
+    "sites": [
+      "etsy.com"
+    ],
+    "appStoreId": "477128284"
+  },
+  {
+    "id": "ikea",
+    "label": "IKEA",
+    "src": "icons/app-store/ikea.jpg",
+    "sites": [
+      "ikea.com"
+    ],
+    "appStoreId": "1452164827"
+  },
+  {
+    "id": "airbnb",
+    "label": "Airbnb",
+    "src": "icons/app-store/airbnb.jpg",
+    "sites": [
+      "airbnb.com"
+    ],
+    "appStoreId": "401626263"
+  },
+  {
+    "id": "booking",
+    "label": "Booking.com бронирование жилья",
+    "src": "icons/app-store/booking.jpg",
+    "sites": [
+      "booking.com"
+    ],
+    "appStoreId": "367003839"
+  },
+  {
+    "id": "uber",
+    "label": "Uber | Заказ поездок",
+    "src": "icons/app-store/uber.jpg",
+    "sites": [
+      "uber.com"
+    ],
+    "appStoreId": "368677368"
+  },
+  {
+    "id": "tripadvisor",
+    "label": "Tripadvisor: все для поездок",
+    "src": "icons/app-store/tripadvisor.jpg",
+    "sites": [
+      "tripadvisor.com"
+    ],
+    "appStoreId": "284876795"
+  },
+  {
+    "id": "paypal",
+    "label": "PayPal",
+    "src": "icons/app-store/paypal.jpg",
+    "sites": [
+      "paypal.com"
+    ],
+    "appStoreId": "283646709"
+  },
+  {
+    "id": "revolut",
+    "label": "Revolut: send, spend, and save",
+    "src": "icons/app-store/revolut.jpg",
+    "sites": [
+      "revolut.com"
+    ],
+    "appStoreId": "932493382"
+  },
+  {
+    "id": "strava",
+    "label": "Strava: Run, Bike, Walk",
+    "src": "icons/app-store/strava.jpg",
+    "sites": [
+      "strava.com"
+    ],
+    "appStoreId": "426826309"
+  },
+  {
+    "id": "fitbit",
+    "label": "Google Health (Fitbit)",
+    "src": "icons/app-store/fitbit.jpg",
+    "sites": [
+      "fitbit.com"
+    ],
+    "appStoreId": "462638897"
+  },
+  {
+    "id": "kinopoisk",
+    "label": "Кинопоиск－фильмы，сериалы，спорт",
+    "src": "icons/app-store/kinopoisk.jpg",
+    "sites": [
+      "kinopoisk.ru"
+    ],
+    "appStoreId": "477718890"
+  },
+  {
+    "id": "yandex-music",
+    "label": "Яндекс Музыка, книги, подкасты",
+    "src": "icons/app-store/yandex-music.jpg",
+    "sites": [
+      "music.yandex.ru"
+    ],
+    "appStoreId": "520797969"
+  },
+  {
+    "id": "yandex-go",
+    "label": "Яндекс Go: Такси Еда Доставка",
+    "src": "icons/app-store/yandex-go.jpg",
+    "sites": [
+      "taxi.yandex.ru",
+      "go.yandex"
+    ],
+    "appStoreId": "472650686"
+  },
+  {
+    "id": "wildberries",
+    "label": "WILDBERRIES",
+    "src": "icons/app-store/wildberries.jpg",
+    "sites": [
+      "wildberries.ru"
+    ],
+    "appStoreId": "597880187"
+  },
+  {
+    "id": "2gis",
+    "label": "2ГИС: карты, навигатор, друзья",
+    "src": "icons/app-store/2gis.jpg",
+    "sites": [
+      "2gis.ru",
+      "2gis.com"
+    ],
+    "appStoreId": "481627348"
   }
 ]

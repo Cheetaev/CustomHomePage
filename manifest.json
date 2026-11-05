@@ -2,12 +2,16 @@
   "manifest_version": 3,
   "name": "Dark New Tab",
   "version": "1.14.0",
-  "description": "Тёмная страница новой вкладки с быстрыми ссылками, поиском Яндекса, ChatGPT и Claude.",
+  "description": "Тёмная страница новой вкладки с быстрыми ссылками, поиском Яндекса и Google.",
   "permissions": [
     "storage",
+    "nativeMessaging",
     "scripting"
   ],
   "host_permissions": [
+    "https://wttr.in/*",
+    "https://www.google.com/*",
+    "https://*.gstatic.com/*",
     "https://chatgpt.com/*",
     "https://chat.openai.com/*",
     "https://claude.ai/*"
@@ -21,6 +25,9 @@
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
+  },
+  "background": {
+    "service_worker": "state-file.js"
   },
   "content_scripts": [
     {
