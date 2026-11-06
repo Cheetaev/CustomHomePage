@@ -1,4 +1,5 @@
 const stateHost = "com.homerep.dark_new_tab";
+const platform = chrome.runtime.getPlatformInfo();
 
 let initialization;
 
@@ -6,26 +7,36 @@ function initializeState() {
   initialization ??= (async () => {
     const local = await chrome.storage.local.get(null);
     if (!Object.keys(local).length) {
-      const chunks = [];
-      let offset = 0;
-      while (true) {
-        const result = await chrome.runtime.sendNativeMessage(stateHost, { action: "read", offset });
-        if (result.missing) {
-          return;
+      let snapshot;
+      if ((await platform).os === "win") {
+        const chunks = [];
+        let offset = 0;
+        while (true) {
+          const result = await chrome.runtime.sendNativeMessage(stateHost, { action: "read", offset });
+          if (result.missing) {
+            return;
+          }
+          if (!result.ok) {
+            throw new Error("Unable to read state file");
+          }
+
+          const chunk = Uint8Array.from(atob(result.chunk), (character) => character.charCodeAt(0));
+          chunks.push(chunk);
+          offset += chunk.length;
+          if (result.done) {
+            break;
+          }
         }
-        if (!result.ok) {
+
+        snapshot = JSON.parse(await new Blob(chunks).text());
+      } else {
+        const response = await fetch(chrome.runtime.getURL("dark-new-tab-state.json"));
+        if (!response.ok) {
           throw new Error("Unable to read state file");
         }
-
-        const chunk = Uint8Array.from(atob(result.chunk), (character) => character.charCodeAt(0));
-        chunks.push(chunk);
-        offset += chunk.length;
-        if (result.done) {
-          break;
-        }
+        snapshot = await response.json();
       }
 
-      const snapshot = JSON.parse(await new Blob(chunks).text());
       if (snapshot?.version !== 1 || !snapshot.state ||
           typeof snapshot.state !== "object" || Array.isArray(snapshot.state)) {
         throw new Error("Invalid state file");
@@ -42,6 +53,9 @@ function initializeState() {
 
 async function syncState() {
   await initializeState();
+  if ((await platform).os !== "win") {
+    return;
+  }
   await navigator.locks.request("dark-new-tab-state-file", async () => {
     const state = await chrome.storage.local.get(null);
     const result = await chrome.runtime.sendNativeMessage(stateHost, { action: "write", state });

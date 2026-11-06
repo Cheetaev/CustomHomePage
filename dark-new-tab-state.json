@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "state": {
+    "customShortcuts": [
+      {
+        "iconId": "favicon",
+        "title": "PREMIER",
+        "url": "https://premier.one/"
+      },
+      {
+        "iconId": "favicon",
+        "title": "Keenetic",
+        "url": "http://192.168.1.1/login?backUrl=%2Ftraffic-monitor%2Ftop-devices"
+      }
+    ],
+    "favicon:https://www.google.com/s2/favicons?sz=64&domain=keenetic.com": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAS1BMVEUcltP///9xvuTy+fzj8vo4o9kqndYgmNRsu+PX7PfI5fSw2vCYz+vn9Pr6/f7T6/dHqtu23fHE5PSk1e2Kyeh+w+ZTsN5uvONEqdt47Z0bAAAA1UlEQVRIie2Uyw6DIBAAQUWsWMVn/f8vLWRRIrsYjLfWOcpMEEQYe/grqtzywgMqd9Tl4XnGLUWoy547Aj8SeH8IfDrwfi/DuanA+wr5VCCHzR+xTwTeb7BOBN6fKB8FZb35M+mHwe63Ge274C2Atdv8KuK7AFEvxAadBWbSRl8LDJ24GPB8uRjwFu/teUB8jeO2WnQ1j0Oxv1XS8TZo5YrwQMUC8/O2sAyRGrAPTDElBwzOiUoPYKxLDxZYhEwOBCxCJAclBPpeEL0qbQB35UoOPvwsX+IJBvZvue+PAAAAAElFTkSuQmCC",
+    "favicon:https://www.google.com/s2/favicons?sz=64&domain=premier.one": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAbFBMVEUUFBT93S3/4C1BOhnYvSkMDhQAABMREhQICxT/5C5COxf42S0ABBPnyisPEBQiIBVUShknJRbHryetmSRLQxiSgSB7bR4XGBVpXR3x0iyjjyNeVBu7pCUcGxXQtiiNfB8tKhaahyJzZh2FdR8F7PXaAAABC0lEQVRYhe2VW5ODIAyFIRW8QUWK673W7v//j4ud6YPV7gB55bzzTXKSHAiJioqK+k8su6LeXwtVC8z7Spc3w7NgACsSyJPGiNA+2CUBClT/tBwBsJK6EwwDANoPQUW8ARuCdlyk4QCrPBnbzBOxA1CAycx+I90DbBGyMdzHzU8AhfK+PDzcPAA2xNS5r+YJwCLkpLjjap4C7EjlMrs5cQ7YGEPtNNBvAIChQgBsC2uNaMGaWCBMtGN8ivAxAtyblLsfxHGVV+OVsh/HVN5UizimXI6EBZ8zOlD6aUZEGvR69IqBPcDG+m8VGuuvj2W9uC7eQemsy0GlQdW/S1CVv/c7gm+QR0VFRRHyB05MC9M0dxFlAAAAAElFTkSuQmCC",
+    "googleSearchHistory": [
+      "привет"
+    ],
+    "keyboardLayout": "en",
+    "searchHistory": [
+      "привет"
+    ],
+    "shortcutOrder": [
+      "[\"default\",\"https://mail.yandex.ru/\",\"Яндекс Почта\",\"yandex-mail\"]",
+      "[\"default\",\"https://yandex.ru/maps/\",\"Яндекс Карты\",\"yandex-maps\"]",
+      "[\"default\",\"https://mail.google.com/\",\"Гугл Почта\",\"gmail\"]",
+      "[\"default\",\"https://disk.yandex.ru/\",\"Яндекс Диск\",\"yandex-disk\"]",
+      "[\"custom\",\"https://premier.one/\",\"PREMIER\",\"favicon\"]",
+      "[\"custom\",\"https://keenetic.ru/ru/products\",\"Модели | Keenetic\",\"favicon\"]",
+      "[\"custom\",\"http://192.168.1.1/login?backUrl=%2Ftraffic-monitor%2Ftop-devices\",\"Keenetic\",\"favicon\"]"
+    ],
+    "yandexSearchHistory": [
+      "когда вышла эверспейс 2",
+      "привет"
+    ]
+  }
+}
