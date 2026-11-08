@@ -23,7 +23,6 @@ const defaultShortcuts = [
   { title: "Яндекс Диск", url: "https://disk.yandex.ru/", iconId: "yandex-disk" }
 ];
 const SEARCH_HISTORY_LIMIT = 10;
-const SHORTCUT_LIMIT = 18;
 const SITE_ICON_ID = "favicon";
 const SUGGESTION_LIMIT = 5;
 const shortcutSuggestions = [
@@ -828,16 +827,13 @@ function listVisibleShortcuts() {
 
 function renderShortcuts() {
   const items = listVisibleShortcuts();
-  const shown = items.slice(0, SHORTCUT_LIMIT);
   const fragment = document.createDocumentFragment();
 
-  for (const { shortcut, source } of shown) {
+  for (const { shortcut, source } of items) {
     fragment.append(createShortcutCard(shortcut, source));
   }
 
-  if (items.length < SHORTCUT_LIMIT) {
-    fragment.append(createAddShortcutButton());
-  }
+  fragment.append(createAddShortcutButton());
 
   if (!items.length) {
     const edit = document.createElement("button");
@@ -1424,11 +1420,6 @@ shortcutForm.addEventListener("submit", async (event) => {
   }
 
   if (!title) {
-    return;
-  }
-
-  if (!editingShortcut && listVisibleShortcuts().length >= SHORTCUT_LIMIT) {
-    await closeShortcutDialog();
     return;
   }
 
